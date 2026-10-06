@@ -1,141 +1,192 @@
-CREATE TABLE Category (
-    Category_ID     NUMBER PRIMARY KEY,
-    Category_Name   VARCHAR2(50) NOT NULL,
-    Description     VARCHAR2(255)
-);
+SQL> CREATE TABLE Category (
+  2      Category_ID NUMBER(5) PRIMARY KEY,
+  3      Category_Name VARCHAR2(50) NOT NULL
+  4  );
 
-INSERT INTO Category (Category_ID, Category_Name, Description)
-VALUES (1, 'Duke Bikes', 'Duke motorcycles available for purchase');
+Table created.
 
-INSERT INTO Category (Category_ID, Category_Name, Description)
-VALUES (2, 'Spare Parts', 'Original spare parts for Duke motorcycles');
+SQL> INSERT INTO Category VALUES (1, 'Duke Bikes');
 
-INSERT INTO Category (Category_ID, Category_Name, Description)
-VALUES (3, 'Accessories', 'Accessories for Duke motorcycles');
+1 row created.
 
-INSERT INTO Category (Category_ID, Category_Name, Description)
-VALUES (4, 'Riding Gear', 'Safety and riding equipment for riders');
+SQL> INSERT INTO Category VALUES (2, 'Spare Parts');
 
-INSERT INTO Category (Category_ID, Category_Name, Description)
-VALUES (5, 'Bike Services', 'Maintenance and service for Duke motorcycles');
+1 row created.
 
+SQL> INSERT INTO Category VALUES (3, 'Accessories');
 
-CREATE TABLE Product (
-    Product_ID      NUMBER PRIMARY KEY,
-    Product_Name    VARCHAR2(100) NOT NULL,
-    Brand_ID        NUMBER,
-    Category_ID     NUMBER NOT NULL,
-    Price           NUMBER(10,2) NOT NULL,
-    Model           VARCHAR2(50),
-    Color           VARCHAR2(50),
-    Stock           NUMBER NOT NULL,
-    CONSTRAINT FK_Product_Category
-        FOREIGN KEY (Category_ID)
-        REFERENCES Category(Category_ID)
-);
+1 row created.
 
+SQL> INSERT INTO Category VALUES (4, 'Riding Gear');
 
-INSERT INTO Product
-VALUES (101, 'KTM Duke 200', 1, 1, 198000.00, 'Duke 200', 'Orange', 10);
+1 row created.
 
-INSERT INTO Product
-VALUES (102, 'KTM Duke 250', 1, 1, 230000.00, 'Duke 250', 'Black', 8);
+SQL> INSERT INTO Category VALUES (5, 'Helmets');
 
-INSERT INTO Product
-VALUES (103, 'KTM Duke 390', 1, 1, 320000.00, 'Duke 390', 'Orange', 6);
+1 row created.
 
-INSERT INTO Product
-VALUES (104, 'Duke Clutch Plate', 1, 2, 4500.00, 'Duke 200', 'Black', 25);
+SQL> INSERT INTO Category VALUES (6, 'Bike Lights');
 
-INSERT INTO Product
-VALUES (105, 'Duke Brake Pad Set', 1, 2, 2800.00, 'Duke 250', 'Black', 30);
+1 row created.
 
-INSERT INTO Product
-VALUES (106, 'Duke Chain Kit', 1, 2, 6500.00, 'Duke 390', 'Steel', 20);
+SQL> INSERT INTO Category VALUES (7, 'Engine Parts');
 
-INSERT INTO Product
-VALUES (107, 'Duke Crash Guard', 1, 3, 5500.00, 'Duke 200', 'Black', 18);
+1 row created.
 
-INSERT INTO Product
-VALUES (108, 'Duke LED Headlight', 1, 3, 7500.00, 'Duke 390', 'White', 12);
+SQL> INSERT INTO Category VALUES (8, 'Brake Parts');
 
-INSERT INTO Product
-VALUES (109, 'Duke Riding Jacket', 1, 4, 8500.00, 'All Models', 'Black', 15);
+1 row created.
 
-INSERT INTO Product
-VALUES (110, 'Duke General Service', 1, 5, 3500.00, 'All Models', 'N/A', 20);
+SQL> INSERT INTO Category VALUES (9, 'Electrical Parts');
 
+1 row created.
 
-SELECT * FROM Category;
+SQL> INSERT INTO Category VALUES (10, 'Bike Services');
 
-SELECT * FROM Product;
+1 row created.
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> SELECT * FROM Category;
+
+CATEGORY_ID  CATEGORY_NAME
+-----------  ----------------
+1            Duke Bikes
+2            Spare Parts
+3            Accessories
+4            Riding Gear
+5            Helmets
+6            Bike Lights
+7            Engine Parts
+8            Brake Parts
+9            Electrical Parts
+10           Bike Services
+
+10 rows selected.
 
 
-UPDATE Product
-SET Price = 195000.00,
-    Stock = 12
-WHERE Product_ID = 101;
+SQL> CREATE TABLE Product (
+  2      Product_ID NUMBER(5) PRIMARY KEY,
+  3      Product_Name VARCHAR2(100) NOT NULL,
+  4      Category_ID NUMBER(5),
+  5      Price NUMBER(10,2),
+  6      Stock_Quantity NUMBER(5)
+  7  );
 
-SELECT * FROM Product
-WHERE Product_ID = 101;
+Table created.
+
+SQL> INSERT INTO Product VALUES
+  2  (101, 'KTM Duke 200', 1, 200000, 5);
+
+1 row created.
+
+SQL> INSERT INTO Product VALUES
+  2  (102, 'KTM Duke 250', 1, 250000, 4);
+
+1 row created.
+
+SQL> INSERT INTO Product VALUES
+  2  (103, 'KTM Duke 390', 1, 350000, 3);
+
+1 row created.
+
+SQL> INSERT INTO Product VALUES
+  2  (104, 'Clutch Plate', 2, 4500, 10);
+
+1 row created.
+
+SQL> INSERT INTO Product VALUES
+  2  (105, 'Brake Pads', 8, 2500, 15);
+
+1 row created.
+
+SQL> INSERT INTO Product VALUES
+  2  (106, 'Chain Kit', 2, 5500, 8);
+
+1 row created.
+
+SQL> INSERT INTO Product VALUES
+  2  (107, 'Crash Guard', 3, 3500, 12);
+
+1 row created.
+
+SQL> INSERT INTO Product VALUES
+  2  (108, 'LED Headlight', 6, 4000, 7);
+
+1 row created.
+
+SQL> INSERT INTO Product VALUES
+  2  (109, 'Riding Jacket', 4, 7500, 6);
+
+1 row created.
+
+SQL> INSERT INTO Product VALUES
+  2  (110, 'Full Face Helmet', 5, 6500, 10);
+
+1 row created.
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> SELECT * FROM Product;
+
+PRODUCT_ID  PRODUCT_NAME        CATEGORY_ID  PRICE       STOCK_QUANTITY
+----------  ------------------  -----------  ----------  --------------
+101         KTM Duke 200        1            200000      5
+102         KTM Duke 250        1            250000      4
+103         KTM Duke 390        1            350000      3
+104         Clutch Plate        2            4500        10
+105         Brake Pads          8            2500        15
+106         Chain Kit           2            5500        8
+107         Crash Guard         3            3500        12
+108         LED Headlight       6            4000        7
+109         Riding Jacket       4            7500        6
+110         Full Face Helmet    5            6500        10
+
+10 rows selected.
 
 
-UPDATE Product
-SET Price = 235000.00
-WHERE Product_Name = 'KTM Duke 250';
+SQL> UPDATE Product
+  2  SET Price = 205000
+  3  WHERE Product_ID = 101;
 
-SELECT * FROM Product
-WHERE Product_Name = 'KTM Duke 250';
+1 row updated.
 
+SQL> SELECT Product_ID, Product_Name, Price
+  2  FROM Product
+  3  WHERE Product_ID = 101;
 
-DELETE FROM Product
-WHERE Product_ID = 110;
+PRODUCT_ID  PRODUCT_NAME    PRICE
+----------  --------------  ----------
+101         KTM Duke 200    205000
 
-SELECT * FROM Product
-WHERE Product_ID = 110;
-
-
-DELETE FROM Product
-WHERE Product_Name = 'Duke Riding Jacket';
-
-SELECT * FROM Product
-WHERE Product_Name = 'Duke Riding Jacket';
+1 row selected.
 
 
-SELECT * FROM Product;
+SQL> SELECT
+  2      P.Product_ID,
+  3      P.Product_Name,
+  4      C.Category_Name,
+  5      P.Price,
+  6      P.Stock_Quantity
+  7  FROM Product P
+  8  JOIN Category C
+  9  ON P.Category_ID = C.Category_ID;
 
+PRODUCT_ID  PRODUCT_NAME        CATEGORY_NAME    PRICE       STOCK_QUANTITY
+----------  ------------------  ---------------  ----------  --------------
+101         KTM Duke 200        Duke Bikes       205000      5
+102         KTM Duke 250        Duke Bikes       250000      4
+103         KTM Duke 390        Duke Bikes       350000      3
+104         Clutch Plate        Spare Parts      4500        10
+105         Brake Pads          Brake Parts      2500        15
+106         Chain Kit           Spare Parts      5500        8
+107         Crash Guard         Accessories      3500        12
+108         LED Headlight       Bike Lights      4000        7
+109         Riding Jacket       Riding Gear      7500        6
+110         Full Face Helmet    Helmets          6500        10
 
-SELECT
-    c.Category_Name,
-    p.Product_ID,
-    p.Product_Name,
-    p.Price,
-    p.Stock
-FROM Category c
-JOIN Product p
-    ON c.Category_ID = p.Category_ID
-ORDER BY c.Category_Name, p.Product_Name;
-
-
-SELECT
-    p.Product_ID,
-    p.Product_Name,
-    p.Price,
-    p.Stock
-FROM Product p
-JOIN Category c
-    ON p.Category_ID = c.Category_ID
-WHERE c.Category_Name = 'Spare Parts';
-
-
-SELECT
-    c.Category_Name,
-    COUNT(p.Product_ID) AS Total_Products
-FROM Category c
-LEFT JOIN Product p
-    ON c.Category_ID = p.Category_ID
-GROUP BY c.Category_Name
-ORDER BY c.Category_Name;
-
-
-COMMIT;
+10 rows selected.
