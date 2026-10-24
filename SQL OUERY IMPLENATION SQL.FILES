@@ -1,0 +1,181 @@
+-- DUKE BIKE INVENTORY AND ORDER MANAGEMENT SYSTEM
+
+CREATE DATABASE IF NOT EXISTS Duke_Bike;
+USE Duke_Bike;
+
+-- Drop tables in foreign-key dependency order
+DROP TABLE IF EXISTS Order_Details;
+DROP TABLE IF EXISTS Orders;
+DROP TABLE IF EXISTS Inventory;
+DROP TABLE IF EXISTS Products;
+DROP TABLE IF EXISTS Sellers;
+DROP TABLE IF EXISTS Customers;
+
+-- Create Sellers Table
+CREATE TABLE Sellers (
+    Seller_ID INT PRIMARY KEY,
+    Seller_Name VARCHAR(100) NOT NULL,
+    Phone VARCHAR(15),
+    City VARCHAR(50)
+);
+
+-- Create Products Table
+CREATE TABLE Products (
+    Product_ID INT PRIMARY KEY,
+    Product_Name VARCHAR(100) NOT NULL,
+    Category VARCHAR(50),
+    Price DECIMAL(10,2) NOT NULL
+);
+
+-- Create Inventory Table
+CREATE TABLE Inventory (
+    Inventory_ID INT PRIMARY KEY,
+    Seller_ID INT,
+    Product_ID INT,
+    Stock_Quantity INT NOT NULL DEFAULT 0,
+    Availability VARCHAR(20),
+    FOREIGN KEY (Seller_ID) REFERENCES Sellers(Seller_ID),
+    FOREIGN KEY (Product_ID) REFERENCES Products(Product_ID)
+);
+
+-- Create Customers Table
+CREATE TABLE Customers (
+    Customer_ID INT PRIMARY KEY,
+    Customer_Name VARCHAR(100) NOT NULL,
+    Email VARCHAR(100),
+    City VARCHAR(50)
+);
+
+-- Create Orders Table
+CREATE TABLE Orders (
+    Order_ID INT PRIMARY KEY,
+    Customer_ID INT NOT NULL,
+    Order_Date DATE NOT NULL,
+    Total_Amount DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (Customer_ID) REFERENCES Customers(Customer_ID)
+);
+
+-- Create Order_Details Table
+CREATE TABLE Order_Details (
+    Order_Detail_ID INT PRIMARY KEY,
+    Order_ID INT NOT NULL,
+    Product_ID INT NOT NULL,
+    Quantity INT NOT NULL,
+    Price DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (Order_ID) REFERENCES Orders(Order_ID),
+    FOREIGN KEY (Product_ID) REFERENCES Products(Product_ID)
+);
+
+-- Insert Seller Records
+INSERT INTO Sellers VALUES
+(1, 'Duke Motors Chennai', '9876543210', 'Chennai'),
+(2, 'Speed Bikes', '9876543211', 'Coimbatore'),
+(3, 'Royal Wheels', '9876543212', 'Madurai');
+
+-- Insert Product Records
+INSERT INTO Products VALUES
+(101, 'KTM Duke 200', 'Motorcycle', 200000.00),
+(102, 'KTM Duke 250', 'Motorcycle', 235000.00),
+(103, 'KTM Duke 390', 'Motorcycle', 320000.00),
+(104, 'Bike Helmet', 'Accessory', 2500.00),
+(105, 'Riding Gloves', 'Accessory', 1500.00);
+
+-- Insert Inventory Records
+INSERT INTO Inventory VALUES
+(1, 1, 101, 10, 'Available'),
+(2, 1, 102, 5, 'Available'),
+(3, 2, 103, 0, 'Unavailable'),
+(4, 2, 104, 20, 'Available'),
+(5, 3, 105, 15, 'Available');
+
+-- Insert Customer Records
+INSERT INTO Customers VALUES
+(201, 'Arun Kumar', 'arun@example.com', 'Chennai'),
+(202, 'Priya', 'priya@example.com', 'Coimbatore'),
+(203, 'Rahul', 'rahul@example.com', 'Madurai'),
+(204, 'Divya', 'divya@example.com', 'Chennai');
+
+-- Insert Order Records
+INSERT INTO Orders VALUES
+(301, 201, '2026-10-01', 200000.00),
+(302, 202, '2026-10-03', 235000.00),
+(303, 203, '2026-10-05', 2500.00),
+(304, 201, '2026-10-08', 1500.00);
+
+-- Insert Order Details
+INSERT INTO Order_Details VALUES
+(1, 301, 101, 1, 200000.00),
+(2, 302, 102, 1, 235000.00),
+(3, 303, 104, 1, 2500.00),
+(4, 304, 105, 1, 1500.00);
+
+-- Display All Products
+SELECT * FROM Products;
+
+-- Display Available Inventory
+SELECT * FROM Inventory
+WHERE Availability = 'Available';
+
+-- Display Unavailable Products
+SELECT P.Product_ID, P.Product_Name,
+       I.Stock_Quantity, I.Availability
+FROM Products P
+JOIN Inventory I ON P.Product_ID = I.Product_ID
+WHERE I.Availability = 'Unavailable';
+
+-- Products Priced Below 100000
+SELECT * FROM Products
+WHERE Price < 100000;
+
+-- Products from Lowest to Highest Price
+SELECT * FROM Products
+ORDER BY Price ASC;
+
+-- Display All Customers
+SELECT * FROM Customers;
+
+-- Display Customer Orders
+SELECT O.Order_ID, C.Customer_Name,
+       O.Order_Date, O.Total_Amount
+FROM Orders O
+JOIN Customers C
+ON O.Customer_ID = C.Customer_ID
+ORDER BY O.Order_Date;
+
+-- Product Order Report
+SELECT P.Product_Name,
+       SUM(OD.Quantity) AS Total_Quantity,
+       SUM(OD.Quantity * OD.Price) AS Total_Sales
+FROM Products P
+JOIN Order_Details OD
+ON P.Product_ID = OD.Product_ID
+GROUP BY P.Product_ID, P.Product_Name;
+
+-- Customer-wise Total Orders
+SELECT C.Customer_ID, C.Customer_Name,
+       COUNT(O.Order_ID) AS Total_Orders
+FROM Customers C
+LEFT JOIN Orders O
+ON C.Customer_ID = O.Customer_ID
+GROUP BY C.Customer_ID, C.Customer_Name;
+
+-- Customer-wise Total Purchase Amount
+SELECT C.Customer_ID, C.Customer_Name,
+       COALESCE(SUM(O.Total_Amount), 0) AS Total_Purchase
+FROM Customers C
+LEFT JOIN Orders O
+ON C.Customer_ID = O.Customer_ID
+GROUP BY C.Customer_ID, C.Customer_Name;
+
+-- Update Inventory Stock
+UPDATE Inventory
+SET Stock_Quantity = 8,
+    Availability = 'Available'
+WHERE Inventory_ID = 2;
+
+-- Display Final Inventory Report
+SELECT P.Product_Name, S.Seller_Name,
+       I.Stock_Quantity, I.Availability
+FROM Inventory I
+JOIN Products P ON I.Product_ID = P.Product_ID
+JOIN Sellers S ON I.Seller_ID = S.Seller_ID;
